@@ -9,6 +9,8 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+cf_port = os.getenv("PORT")
+
 
 @app.route("/produce")
 def hello_world():
@@ -73,4 +75,10 @@ def run_tasks(opts, run_producer, producer, geo_coordinates):
         producer = producertask.ProducerTask(producer_opts, opts['topic_name'])
         producer.run(geo_coordinates)
 
-app.run()
+#app.run()
+if __name__ == '__main__':
+	if cf_port is None:
+		app.run(host='0.0.0.0', port=5000, debug=True)
+	else:
+		app.run(host='0.0.0.0', port=int(cf_port), debug=True)
+        
