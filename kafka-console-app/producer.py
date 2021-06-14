@@ -15,7 +15,11 @@ def hello_world():
     opts = {}
     run_producer = True
     producer = None
-    geo_coordinates = 'Latitude : ' + request.args['lat'] + ' , Longitude : ' + request.args['long']
+    # geo_coordinates = 'Latitude : ' + request.args['lat'] + ' , Longitude : ' + request.args['long']
+    geo_coordinates = {
+        'Latitude': request.args['lat'],
+        'Longitude': request.args['long']
+    }
 
     load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
     opts['brokers'] = os.getenv("KAFKA_BROKERS_SASL")

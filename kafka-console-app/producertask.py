@@ -1,4 +1,5 @@
 from confluent_kafka import Producer
+import json
 
 class ProducerTask(object):
 
@@ -23,7 +24,7 @@ class ProducerTask(object):
         print('The producer has started')
         key = 'key'
         try:
-            self.producer.produce(self.topic_name, geo_coordinates, key, -1, self.on_delivery)
+            self.producer.produce(self.topic_name, json.dumps(geo_coordinates), key, -1, self.on_delivery)
             self.producer.poll(0)
             self.counter += 1
         except Exception as err:
