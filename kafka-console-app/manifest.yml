@@ -2,3 +2,4 @@ applications:
   - name: CollarKafka
     random-route: true
     memory: 128M
+    command: python3 producer.py
