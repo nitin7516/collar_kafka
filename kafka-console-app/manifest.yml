@@ -2,4 +2,4 @@ applications:
   - name: producer
     random-route: true
     memory: 256M
-    command: producer.py
+    command: python producer.py
