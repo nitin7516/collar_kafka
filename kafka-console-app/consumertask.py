@@ -22,11 +22,11 @@ class ConsumerTask(object):
                 print("Message consumed: " + str(msg.value()))
                 data = json.loads(msg.value())
                 existingCoordinates.insert(0, data)
-                data_json = json.dumps(existingCoordinates)
+                data_json = json.dumps({"Location": existingCoordinates})
                 if(os.path.isfile('coordinates.json')):
                     with open('coordinates.json', 'r+') as file:
                         file_data = json.load(file)
-                        file_data.insert(0,data)
+                        file_data["Location"].insert(0,data)
                         file.seek(0)
                         json.dump(file_data, file, indent=4)
                 else:

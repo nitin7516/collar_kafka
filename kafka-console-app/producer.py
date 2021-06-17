@@ -15,10 +15,10 @@ def hello_world():
     opts = {}
     run_producer = True
     producer = None
-    # geo_coordinates = 'Latitude : ' + request.args['lat'] + ' , Longitude : ' + request.args['long']
     geo_coordinates = {
         'Latitude': request.args['lat'],
-        'Longitude': request.args['long']
+        'Longitude': request.args['long'],
+        'Temperature': request.args['temp']
     }
 
     load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
@@ -28,22 +28,12 @@ def hello_world():
     opts['username'] = os.getenv("USER")
     opts['topic_name'] = os.getenv("TOPIC")
 
-    print('Kafka Endpoints: {0}'.format(opts['brokers']))
-    print('Admin REST Endpoint: {0}'.format(opts['rest_endpoint']))
-    print('API_KEY: {0}'.format(opts['api_key']))
-
     if any(k not in opts for k in ('brokers', 'rest_endpoint', 'api_key')):
         print('Error - Failed to retrieve options. Check that app is bound to an Event Streams service or that command line options are correct.')
         sys.exit(-1)
     
     rest_client = rest.EventStreamsRest(opts['rest_endpoint'], opts['api_key'])
-    print('Creating the topic {0} with Admin REST API'.format(opts['topic_name']))
-    response = rest_client.create_topic(opts['topic_name'], 1, 24)
-    print(response.text)
-
-    print('Admin REST Listing Topics:')
-    response = rest_client.list_topics()
-    print(response.text)
+    rest_client.create_topic(opts['topic_name'], 1, 24)
 
     run_tasks(opts, run_producer, producer, geo_coordinates)
 
@@ -66,8 +56,6 @@ def run_tasks(opts, run_producer, producer, geo_coordinates):
 
     for key in driver_options:
         producer_opts[key] = driver_options[key]
-
-    tasks = []
 
     if run_producer:
         producer = producertask.ProducerTask(producer_opts, opts['topic_name'])

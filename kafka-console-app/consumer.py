@@ -22,10 +22,6 @@ class EventStreamsSample(object):
         self.opts['username'] = os.getenv("USER")
         self.opts['topic_name'] = os.getenv("TOPIC")
 
-        print('Kafka Endpoints: {0}'.format(self.opts['brokers']))
-        print('Admin REST Endpoint: {0}'.format(self.opts['rest_endpoint']))
-        print('API_KEY: {0}'.format(self.opts['api_key']))
-
         if any(k not in self.opts for k in ('brokers', 'rest_endpoint', 'api_key')):
             print('Error - Failed to retrieve options. Check that app is bound to an Event Streams service or that command line options are correct.')
             sys.exit(-1)
@@ -33,14 +29,7 @@ class EventStreamsSample(object):
         # Use Event Streams' REST admin API to create the topic
         # with 1 partition and a retention period of 24 hours.
         rest_client = rest.EventStreamsRest(self.opts['rest_endpoint'], self.opts['api_key'])
-        print('Creating the topic {0} with Admin REST API'.format(self.opts['topic_name']))
-        response = rest_client.create_topic(self.opts['topic_name'], 1, 24)
-        print(response.text)
-
-        # Use Event Streams' REST admin API to list the existing topics
-        print('Admin REST Listing Topics:')
-        response = rest_client.list_topics()
-        print(response.text)
+        rest_client.create_topic(self.opts['topic_name'], 1, 24)
 
     def shutdown(self):
         print('Shutdown received.')
@@ -82,5 +71,4 @@ if __name__ == "__main__":
     app = EventStreamsSample()
     signal.signal(signal.SIGINT, app.shutdown)
     signal.signal(signal.SIGTERM, app.shutdown)
-    print('This sample app will run until interrupted.')
     sys.exit(asyncio.get_event_loop().run_until_complete(app.run_tasks()))
