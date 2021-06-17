@@ -1,8 +1,8 @@
-#Kafka streaming application using IBM Streams
+## Kafka streaming application using IBM Streams
 
-Our application will be built using IBM Streams. IBM Streams provides a built-in IDE, called **Streams flows**, that allows developers to visually create their streaming application. 
-
-Apache Kafka service, we will be using `IBM Event Streams` on IBM Cloud, which is a high-throughput message bus built on the Kafka platform. 
+Our application is built using IBM Streams and Apache Kafka service.
+we will be using `IBM Event Streams` on IBM Cloud, which is a high-throughput message bus built on the Kafka platform. 
+Kafka producer is deployed on IBM cloud foundry.
 
 
 ## Featured technologies
@@ -14,7 +14,6 @@ Apache Kafka service, we will be using `IBM Event Streams` on IBM Cloud, which i
 ## Prerequisites
 
 * An [IBM Cloud Account](https://cloud.ibm.com)
-* [IBM Cloud Pak for Data](https://www.ibm.com/in-en/products/cloud-pak-for-data)
 
 ## Steps
 
