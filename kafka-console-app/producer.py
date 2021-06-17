@@ -12,17 +12,14 @@ app = Flask(__name__)
 cf_port = os.getenv("PORT")
 
 
-@app.route("/produce")
-def hello_world():
-    opts = {}
-    run_producer = True
-    producer = None
-    geo_coordinates = {
-        'Latitude': request.args['lat'],
-        'Longitude': request.args['long'],
-        'Temperature': request.args['temp']
-    }
+opts = {}
+producer = {}
+producer_opts = {
+    'client.id': 'kafka-python-console-sample-producer',
+}
 
+@app.before_first_request
+def before_first_request_func():
     load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
     opts['brokers'] = os.getenv("KAFKA_BROKERS_SASL")
     opts['rest_endpoint'] = os.getenv("KAFKA_HTTP_URL")
@@ -37,11 +34,6 @@ def hello_world():
     rest_client = rest.EventStreamsRest(opts['rest_endpoint'], opts['api_key'])
     rest_client.create_topic(opts['topic_name'], 1, 24)
 
-    run_tasks(opts, run_producer, producer, geo_coordinates)
-
-    return "Success"
-
-def run_tasks(opts, run_producer, producer, geo_coordinates):
     driver_options = {
         'bootstrap.servers': opts['brokers'],
         'security.protocol': 'SASL_SSL',
@@ -52,16 +44,24 @@ def run_tasks(opts, run_producer, producer, geo_coordinates):
         'broker.version.fallback': '0.10.2.1',
         'log.connection.close' : False
     }
-    producer_opts = {
-        'client.id': 'kafka-python-console-sample-producer',
-    }
 
     for key in driver_options:
         producer_opts[key] = driver_options[key]
+    
+    producer['producer'] = producertask.ProducerTask(producer_opts, opts['topic_name'])
 
-    if run_producer:
-        producer = producertask.ProducerTask(producer_opts, opts['topic_name'])
-        producer.run(geo_coordinates)
+
+@app.route("/produce")
+def hello_world():
+    geo_coordinates = {
+        'Latitude': request.args['lat'],
+        'Longitude': request.args['long'],
+        'Temperature': request.args['temp']
+    }
+
+    producer['producer'].run(geo_coordinates)
+
+    return "Success"
 
 #app.run()
 if __name__ == '__main__':
